@@ -24,6 +24,8 @@ class MoviesDatabase:
                 self.movies_list.append(row)
         # get rid of first 3 letters in movies titleType heading name manually
         self.movies_list[0][0] = self.movies_list[0][0][3:]
+        # declare column titles as a string for queries
+        self.columns = ", ".join(str(word) for word in self.movies_list[0])
         return self.movies_list
 
     # Search movies list on title, bare in mind read_cvs module has to be called first
@@ -39,45 +41,48 @@ class MoviesDatabase:
 
     # create a method that can creates the movie table in the nw database
     def create_table(self):
-        self.cursor.execute(f"CREATE TABLE Movies ({self.movies_list[0][0]} VARCHAR(255)")
+        self.cursor.execute(f"CREATE TABLE Movies ({self.movies_list[0][0]} VARCHAR(255))")
         for heading in self.movies_list[0][1:]:
             self.cursor.execute(f"ALTER TABLE Movies ADD {heading} VARCHAR(255)")
 
     # create a method that can add movies as many movies to the database as user wants
     def add_movies(self):
         while True:
-            row = self.search_title()
-            # for each column in the row add to the Movies table
-            for _ in range(len(self.movies_list[0])):
+            try:
+                row = self.search_title()
+                # make row into a queriable string
+                values = ", ".join(str(word) for word in row)
                 self.cursor.execute(f"""
-                    INSERT INTO Movies ({self.movies_list[_]})
-                    VALUES ('{row[_]}');
+                    INSERT INTO Movies ({self.columns})
+                    VALUES ('{values}');
                     """)
-            check = input("add another movie ot Movies? ")
-            if check[0].lower() == 'n':
-                break
+                check = input("add another movie to Movies? ")
+                if check[0].lower() == 'n':
+                    break
+            except ValueError:
+                print('something went wrong, please try again')
 
     # define a method that adds the whole table to the db, BEWARE OF DUBLICATES
     def add_all_movies_to_db(self):
+
         for row in self.movies_list[1:]:
-            # for each column in the row add to the Movies table
-            for _ in range(len(self.movies_list[0])):
-                self.cursor.execute(f"""
-                    INSERT INTO Movies ({self.movies_list[_]})
-                    VALUES ('{row[_]}');
-                    """)
+            values = ", ".join(str(word) for word in row)
+            self.cursor.execute(f"""
+                INSERT INTO Movies ({self.columns})
+                VALUES ('{values}');
+                """)
 
     # Define a method that loads the db into an object (made abstract) (enter Movies as an argument)
     def load_object_from_db(self, table):
         try:
-            table = self.cursor.execute(f"SELECT * FROM {table}").fetchall()
-            return table
+            obj_table = self.cursor.execute(f"SELECT * FROM {table}").fetchall()
+            return obj_table
         except:
             print("please enter a table from northwind db")
 
     # Define a method that can output a table object to text file line by line (will be in a string format)
     def write_to_textfile(self, table):
-        with open("imported_table.txt", 'w+') as txtfile:
+        with open("imported_table.txt", 'w') as txtfile:
             for line in table:
                 txtfile.write(", ".join(str(word) for word in line) + "\n")
 
@@ -101,7 +106,7 @@ if __name__ == "__main__":
     obj.add_all_movies_to_db()
 
     # load from db to obj
-    new_obj = obj.load_object_from_db()
+    new_obj = obj.load_object_from_db('Movies')
 
-    #output object to text file
+    # output object to text file
     obj.write_to_textfile(new_obj)
