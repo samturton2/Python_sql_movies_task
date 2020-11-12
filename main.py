@@ -21,13 +21,21 @@ class MoviesDatabase:
         with open("imdbtitles.csv", 'r') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                self.movies_list.append(reader)
+                self.movies_list.append(row)
         return self.movies_list
 
     # Search movies list on title
     def search_title(self, title):
+        try:
+            for movies in self.movies_list:
+                if movies[2] == 'title':
+                    return movies
+            raise AttributeError('Title not in this movie list')
+        except:
+            print('Enter a valid Title')
+
+    # create a method that can add movies to the northwind db
+    def add_movies(self):
         pass
-        # try:
-        #     for movies in self.movies_list:
-        #         if movies[2] == 'title':
-        #             pass
+        #self.cursor.execute("CREATE TABLE)
+
