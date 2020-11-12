@@ -1,7 +1,7 @@
 # Import pyodbc to connect with SQL
 import pyodbc
-# # Import pandas library to interact with the csv file
-# import pandas
+# import csv to help read the csv file
+import csv
 
 #create class that can export data from csv file
 class MoviesDatabase:
@@ -15,12 +15,19 @@ class MoviesDatabase:
         # create a class variable that's the cursor
         self.cursor = self.northwind_connection.cursor()
 
-    # def import_data(self):
-    #     data = pandas.read_csv(r'/imdbtitles.csv')
-    #     self.dataframe = pandas.DataFrame(data, columns = ['titleType', 'primaryTitle', 'originalTitle', 'isAdult', 'startYear', 'endYear', 'runtimeMinutes', 'genres'])
+    # create a function that loads each row as a list into a python list
+    def read_csv(self):
+        self.movies_list = []
+        with open("imdbtitles.csv", 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                self.movies_list.append(reader)
+        return self.movies_list
 
-    # Create a function that reads each line of the csv file, loading it into a dictionary
-    def read_csv_lines(self):
-        with open("imdbtitles.csv", 'r') as movies_db:
-           for line in movies_db:
-                print(line)
+    # Search movies list on title
+    def search_title(self, title):
+        pass
+        # try:
+        #     for movies in self.movies_list:
+        #         if movies[2] == 'title':
+        #             pass
