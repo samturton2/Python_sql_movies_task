@@ -25,17 +25,42 @@ class MoviesDatabase:
         return self.movies_list
 
     # Search movies list on title
-    def search_title(self, title):
+    def search_title(self):
+        title = input("What movie do you want? : ")
         try:
             for movies in self.movies_list:
-                if movies[2] == 'title':
+                if movies[2] == title:
                     return movies
             raise AttributeError('Title not in this movie list')
         except:
             print('Enter a valid Title')
 
-    # create a method that can add movies to the northwind db
-    def add_movies(self):
-        pass
-        #self.cursor.execute("CREATE TABLE)
+    # create a method that can creates the movie table in the nw database
+    def create_table(self):
+        self.cursor.execute(f"CREATE TABLE Movies ({self.movies_list[0][0]} VARCHAR(255)")
+        for heading in self.movies_list[0][1:]:
+            self.cursor.execute(f"ALTER TABLE Movies ADD {heading} VARCHAR(255)")
 
+    # create a method that can add movies as many movies to the database as user wants
+    def add_movies(self):
+        while True:
+            row = self.search_title()
+            # for each column in the row add to the Movies table
+            for num in range(len(self.movies_list[0])):
+                self.cursor.execute(f"""
+                    INSERT INTO Movies ({self.movies_list[num]})
+                    VALUES ('{row[num]}');
+                    """)
+            check = input("add another movie ot Movies? ")
+            if check[0].lower() = 'n':
+                break
+
+
+
+
+movies_list = []
+with open("imdbtitles.csv", 'r') as csvfile:
+    reader = csv.reader(csvfile)
+    for row in reader:
+        movies_list.append(row)
+print(movies_list)
