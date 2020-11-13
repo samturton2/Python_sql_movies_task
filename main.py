@@ -51,7 +51,7 @@ class MoviesDatabase:
             try:
                 row = self.search_title()
                 # make row into a queriable string
-                values = ", ".join("'" + str(word) + "'" for word in row)
+                values = ", ".join("'" + str(word).replace("'", " ") + "'" for word in row)
                 self.cursor.execute(f"""
                     INSERT INTO Movies ({self.columns})
                     VALUES ({values});
@@ -66,7 +66,7 @@ class MoviesDatabase:
     def add_all_movies_to_db(self):
 
         for row in self.movies_list[1:]:
-            values = ", ".join("'" + str(word) + "'" for word in row)
+            values = ", ".join("'" + str(word).replace("'", " ") + "'" for word in row)
             self.cursor.execute(f"""
                 INSERT INTO Movies ({self.columns})
                 VALUES ({values});
