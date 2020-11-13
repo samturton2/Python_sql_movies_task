@@ -51,10 +51,10 @@ class MoviesDatabase:
             try:
                 row = self.search_title()
                 # make row into a queriable string
-                values = ", ".join(str(word) for word in row)
+                values = ", ".join("'" + str(word) + "'" for word in row)
                 self.cursor.execute(f"""
                     INSERT INTO Movies ({self.columns})
-                    VALUES ('{values}');
+                    VALUES ({values});
                     """)
                 check = input("add another movie to Movies? ")
                 if check[0].lower() == 'n':
@@ -66,10 +66,10 @@ class MoviesDatabase:
     def add_all_movies_to_db(self):
 
         for row in self.movies_list[1:]:
-            values = ", ".join(str(word) for word in row)
+            values = ", ".join("'" + str(word) + "'" for word in row)
             self.cursor.execute(f"""
                 INSERT INTO Movies ({self.columns})
-                VALUES ('{values}');
+                VALUES ({values});
                 """)
 
     # Define a method that loads the db into an object (made abstract) (enter Movies as an argument)
@@ -84,7 +84,7 @@ class MoviesDatabase:
     def write_to_textfile(self, table):
         with open("imported_table.txt", 'w') as txtfile:
             for line in table:
-                txtfile.write(", ".join(str(word) for word in line) + "\n")
+                txtfile.write(", ".join("'" + str(word) + "'" for word in line) + "\n")
 
 
 # Now exectute functions in order of task
